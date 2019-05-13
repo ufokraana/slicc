@@ -1,4 +1,4 @@
-import { IActionMap, ISlice } from "./interface";
+import { IActionMap, ISlice } from './interface'
 
 /**
  * Creates a slice definition
@@ -24,8 +24,14 @@ import { IActionMap, ISlice } from "./interface";
   })
   ```
  */
-export default <State, Actions extends IActionMap>(
+export const createSlice = <State, Actions extends IActionMap>(
   slice: ISlice<State, Actions>
 ) => ({
   ...slice
 })
+
+/**
+ * @deprecated
+ * @see createSlice
+ */
+export const slice = createSlice

@@ -1,4 +1,4 @@
-import { IStorePrimitives } from "./interface";
+import { IStorePrimitives } from './interface'
 
 /**
  * Returns a set of store primitives that act on the
@@ -18,31 +18,31 @@ import { IStorePrimitives } from "./interface";
   pandaPrimitives.reset() // resets the state with initPanda
   ```
  */
-const bindPrimitives = <
+export const bindPrimitives = <
   Key extends string,
   SubState,
   State extends { [key in Key]: SubState },
-  Initialize extends () => SubState
 >(
   key: Key,
   primitives: IStorePrimitives<State>,
-  initialize: Initialize
+  initialize: () => SubState
 ): IStorePrimitives<SubState> => {
-
-  const {get, set} = primitives
+  const { get, set } = primitives
 
   return {
     get: () => get()[key],
 
-    set: state => set({
-      ...get(),
-      [key]: state
-    })[key],
+    set: state =>
+      set({
+        ...get(),
+        [key]: state
+      })[key],
 
-    reset: delta => set({
-      ...get(),
-      [key]: { ...initialize(), ...delta }
-    })[key],
+    reset: delta =>
+      set({
+        ...get(),
+        [key]: { ...initialize(), ...delta }
+      })[key],
 
     update: delta => {
       const state = get()[key]
@@ -53,5 +53,3 @@ const bindPrimitives = <
     }
   }
 }
-
-export default bindPrimitives

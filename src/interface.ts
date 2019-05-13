@@ -1,7 +1,20 @@
 export interface IStorePrimitives<State> {
+  /**
+   * Gets the current state from the store
+   */
   get: () => Readonly<State>
+  /**
+   * Applies a partial update to the store's state.
+   */
   update: (delta: Partial<State>) => State
+  /**
+   * Completely overwrites the store's state.
+   */
   set: (state: State) => State
+  /**
+   * Uses the slice's initialize() function to reset the state.
+   * Then, optionally, applies a partial update on top.
+   */
   reset: (delta?: Partial<State>) => State
 }
 
@@ -37,8 +50,31 @@ export type ActionsFromSlices<Slices extends ISliceMap> = {
 export type Listener<State> = (state: State) => void
 
 export interface IStore<State, Actions> {
+  /**
+   * Primitives used for managing the store's state.
+   * @see IStorePrimitives
+   */
   primitives: IStorePrimitives<State>
+  /**
+   * A map of actions provided by the input slice.
+   */
   actions: Actions
+  /**
+   * @deprecated
+   * @see setListener
+   */
   setListener: (listener?: Listener<State>) => void
+  /**
+   * Subscribes a listener for state changes
+   *
+   * @remark
+   * Slicc defers listener calls with a setTimeout.
+   * If the state is changed multiple times per "frame",
+   * the listeners will still be triggered once.
+   *
+   * @param listener - Function that gets called with the new state when the state changes.
+   *
+   * @returns A function that unsubscribes the listener.
+   */
+  subscribe: (listener: Listener<State>) => () => void
 }
-
