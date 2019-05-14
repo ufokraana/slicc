@@ -17,13 +17,7 @@ describe(`bindPrimitives`, () => {
     panda: { eats: 'bamboo', drinks: 'tea' }
   })
   let state: IState
-  let primitives: IStorePrimitives<IState> = {
-    get: () => state,
-    set: newState => (state = newState),
-    reset: delta => (state = { ...initialize(), ...delta }),
-    update: delta => (state = { ...state, ...delta })
-  }
-
+  let primitives: IStorePrimitives<IState> 
   let bound: IStorePrimitives<IState['penguin']>
 
   beforeEach(() => {

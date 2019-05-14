@@ -1,5 +1,5 @@
 export * from './bindPrimitives'
 export * from './combineSlices'
-export * from './fromPromise'
+export * from './createSliceFromPromise'
 export * from './createSlice'
 export * from './createStore'
