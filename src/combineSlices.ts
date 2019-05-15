@@ -1,13 +1,28 @@
-import {
-  ISliceMap,
-  IActionMap,
-  IStorePrimitives,
-  StateFromSlices,
-  ActionsFromSlices
-} from './interface'
 
-import { bindPrimitives } from './bindPrimitives'
-import { slice } from './createSlice'
+import { bindState } from './bindState'
+import { makeSlice, ISlice, IActionMap } from './makeSlice'
+import { IStateHandlers } from './makeState'
+
+export interface ISliceMap {
+  [key: string]: ISlice<any, any>
+}
+
+export type StateFromSlice<Slice> = Slice extends ISlice<infer State, any>
+  ? State
+  : never
+
+export type StateFromSlices<Slices extends ISliceMap> = {
+  [key in keyof Slices]: StateFromSlice<Slices[key]>
+}
+
+export type ActionsFromSlice<Slice> = Slice extends ISlice<any, infer Actions>
+  ? Actions
+  : never
+
+export type ActionsFromSlices<Slices extends ISliceMap> = {
+  [key in keyof Slices]: ActionsFromSlice<Slices[key]>
+}
+
 
 /**
  * Combines a map of slice definitions into a single slice.
@@ -43,12 +58,12 @@ export const combineSlices = <
 >(
   slices: Slices,
   makeActions?: (
-    primsWithActions: IStorePrimitives<StateFromSlices<Slices>> & {
+    handlersAndActions: IStateHandlers<StateFromSlices<Slices>> & {
       actions: ActionsFromSlices<Slices>
     }
   ) => MainActions
 ) => {
-  return slice({
+  return makeSlice({
     initialize: () => {
       return Object.entries(slices).reduce(
         (state, [key, slice]) => {
@@ -63,11 +78,7 @@ export const combineSlices = <
       const actions = Object.keys(slices).reduce(
         (actions, key) => {
           const slice = slices[key]
-          const boundPrimitives = bindPrimitives(
-            key,
-            primitives,
-            slice.initialize
-          )
+          const boundPrimitives = bindState(key, primitives, slice.initialize)
           actions[key] = slice.makeActions(boundPrimitives)
           return actions
         },

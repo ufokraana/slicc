@@ -1,5 +1,5 @@
-import { bindPrimitives } from './bindPrimitives'
-import { IStorePrimitives } from './interface'
+import { bindState } from './bindState'
+import { IStatePrimitives, Listener, makeState } from './makeState'
 
 describe(`bindPrimitives`, () => {
   interface IState {
@@ -16,21 +16,16 @@ describe(`bindPrimitives`, () => {
     penguin: { eats: 'fish', drinks: 'cafe mocha' },
     panda: { eats: 'bamboo', drinks: 'tea' }
   })
-  let state: IState
-  let primitives: IStorePrimitives<IState> 
-  let bound: IStorePrimitives<IState['penguin']>
+
+  let state: IStatePrimitives<IState>
+  let bound: IStatePrimitives<IState['penguin']>
+  let listener: Listener<IState>
 
   beforeEach(() => {
-    state = initialize()
+    listener = jest.fn()
+    state = makeState(initialize, listener)
 
-    primitives = {
-      get: () => state,
-      set: newState => (state = newState),
-      reset: delta => (state = { ...initialize(), ...delta }),
-      update: delta => (state = { ...state, ...delta })
-    }
-
-    bound = bindPrimitives('penguin', primitives, () => initialize().penguin)
+    bound = bindState('penguin', state, () => initialize().penguin)
   })
 
   describe(`get()`, () => {
@@ -43,8 +38,8 @@ describe(`bindPrimitives`, () => {
   describe(`set(newState)`, () => {
     it(`sets the correct subslice`, () => {
       bound.set({ drinks: 'beer', eats: 'ice cream' })
-      expect(state.penguin).toEqual({ drinks: 'beer', eats: 'ice cream' })
-      expect(state.panda).toEqual(initialize().panda)
+      expect(state.get().penguin).toEqual({ drinks: 'beer', eats: 'ice cream' })
+      expect(state.get().panda).toEqual(initialize().panda)
     })
     it(`returns the updated slice`, () => {
       expect(bound.set({ drinks: 'beer', eats: 'ice cream' })).toEqual({
@@ -63,11 +58,11 @@ describe(`bindPrimitives`, () => {
     })
     it(`does not touch other substates`, () => {
       const newPandaState = { eats: 'cake', drinks: 'strawberry mango shake' }
-      primitives.update({
+      state.update({
         panda: newPandaState
       })
       bound.reset()
-      expect(state.panda).toEqual(newPandaState)
+      expect(state.get().panda).toEqual(newPandaState)
     })
     it(`applies an update delta after the reset`, () => {
       bound.set({ drinks: 'beer', eats: 'ice cream' })
@@ -92,7 +87,7 @@ describe(`bindPrimitives`, () => {
     })
     it(`does not touch other substates`, () => {
       bound.update({ drinks: 'beer' })
-      expect(state.panda).toEqual(initialize().panda)
+      expect(state.get().panda).toEqual(initialize().panda)
     })
     it(`returns the new substate`, () => {
       expect(bound.update({ drinks: 'beer' })).toEqual({

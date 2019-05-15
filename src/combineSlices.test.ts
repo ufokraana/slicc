@@ -1,5 +1,5 @@
-import { createSlice } from './createSlice'
 import { combineSlices } from './combineSlices'
+import { makeSlice } from './makeSlice'
 
 const fakePrimitives = Symbol('fake primitives')
 jest.mock('./bindPrimitives', () => {
@@ -9,7 +9,7 @@ jest.mock('./bindPrimitives', () => {
 })
 
 describe(`combineSlices`, () => {
-  const penguinSlice = createSlice({
+  const penguinSlice = makeSlice({
     initialize: () => ({ name: 'penguin' }),
     makeActions: primitives => ({
       returnFood: () => 'fish',
@@ -17,7 +17,7 @@ describe(`combineSlices`, () => {
     })
   })
 
-  const pandaSlice = createSlice({
+  const pandaSlice = makeSlice({
     initialize: () => ({ name: 'panda' }),
     makeActions: primitives => ({
       returnFood: () => 'bamboo',

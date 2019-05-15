@@ -1,4 +1,13 @@
-import { IActionMap, ISlice } from './interface'
+import { IStateHandlers } from './makeState'
+
+export interface IActionMap {
+  [key: string]: ((...args: any[]) => any) | IActionMap
+}
+
+export interface ISlice<State, Actions extends IActionMap> {
+  initialize: () => State
+  makeActions: (handlers: IStateHandlers<State>) => Actions
+}
 
 /**
  * Creates a slice definition
@@ -24,14 +33,6 @@ import { IActionMap, ISlice } from './interface'
   })
   ```
  */
-export const createSlice = <State, Actions extends IActionMap>(
+export const makeSlice = <State, Actions extends IActionMap>(
   slice: ISlice<State, Actions>
-) => ({
-  ...slice
-})
-
-/**
- * @deprecated
- * @see createSlice
- */
-export const slice = createSlice
+) => slice

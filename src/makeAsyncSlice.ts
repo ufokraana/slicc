@@ -1,4 +1,4 @@
-import { slice } from './createSlice'
+import { makeSlice } from './makeSlice'
 
 type DoneState<Args, Result> = {
   status: 'done'
@@ -6,6 +6,7 @@ type DoneState<Args, Result> = {
   finishedAt: Date
   args: Args
 }
+
 type PromiseSliceState<Args, Result, Error> =
   | { status: 'idle' }
   | {
@@ -19,10 +20,10 @@ type PromiseSliceState<Args, Result, Error> =
       | { status: 'failed'; error: Error }
       | DoneState<Args, Result>)
 
-export const createSliceFromPromise = <Args extends any[], Result, Error>(
+export const makeAsyncSlice = <Args extends any[], Result, Error>(
   promiser: (...args: Args) => Promise<Result>
 ) =>
-  slice({
+  makeSlice({
     initialize: (): PromiseSliceState<Args, Result, Error> => ({
       status: 'idle'
     }),
@@ -34,7 +35,7 @@ export const createSliceFromPromise = <Args extends any[], Result, Error>(
         let lastResult: DoneState<Args, Result> | undefined = undefined
 
         if (state.status === 'doing') {
-          throw new Error('PromiseSlice started whilst already in progress.')
+          throw new Error('AsyncSlice started whilst already in progress.')
         } else if (state.status === 'done') {
           let { lastResult: discard, ...currentResult } = state
           lastResult = currentResult
