@@ -1,5 +1,4 @@
 Todo:
-sliceFromPromise should not throw, instead return the promise stored in state.
 Attempt to remove extraneous type parameters
 Unit tests
 Generate docs from whatever jsdoc/tsdoc I have
