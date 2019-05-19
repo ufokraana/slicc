@@ -1,4 +1,4 @@
-import { IStateHandlers } from './makeState'
+import { IStateHandlers } from './bindMachine'
 
 export interface IActionMap {
   [key: string]: ((...args: any[]) => any) | IActionMap

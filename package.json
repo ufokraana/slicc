@@ -9,7 +9,7 @@
   "author": "Urmas Lamster <urmasl@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "test": "ts-jest",
+    "test": "jest",
     "build": "tsc"
   },
   "devDependencies": {

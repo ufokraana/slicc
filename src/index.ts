@@ -1,5 +1,5 @@
 export * from './bindState'
-export * from './combineSlices'
-export * from './makeAsyncSlice'
+export * from './mapMachines'
+export * from './wrapAsync'
 export * from './makeSlice'
 export * from './makeStore'

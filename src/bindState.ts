@@ -1,4 +1,4 @@
-import { IStateHandlers } from './makeState'
+import { IStateHandlers } from './bindMachine'
 
 /**
  * Returns a set of state primitives that act on the

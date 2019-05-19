@@ -1,5 +1,5 @@
 import { ISlice, StateFromSlice, ActionsFromSlice } from './interface'
-import { makeState, IStatePrimitives } from './makeState'
+import { makeState, IStatePrimitives } from './bindMachine'
 
 export interface IStore<State, Actions> {
   /**
